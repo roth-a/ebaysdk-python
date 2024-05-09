@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Copyright 2012-2019 eBay Inc.
 Authored by: Tim Keefer
 Licensed under CDDL 1.0
-'''
-import sys
-import lxml
+"""
 import copy
 import datetime
+import json
+import sys
+from collections import defaultdict
+
+import lxml
 from lxml.etree import XMLSyntaxError  # pylint: disable-msg=E0611
 
-from collections import defaultdict
-import json
-
-from ebaysdk.utils import get_dom_tree, python_2_unicode_compatible
 from ebaysdk import log
+from ebaysdk.utils import get_dom_tree, python_2_unicode_compatible
 
 
 @python_2_unicode_compatible
 class ResponseDataObject(object):
-
     def __init__(self, mydict, datetime_nodes=[]):
         self._load_dict(mydict, list(datetime_nodes))
 
@@ -46,9 +45,11 @@ class ResponseDataObject(object):
     def _setattr(self, name, value, datetime_nodes):
         if name.lower() in datetime_nodes:
             try:
-                ts = "%s %s" % (value.partition(
-                    'T')[0], value.partition('T')[2].partition('.')[0])
-                value = datetime.datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')
+                ts = "%s %s" % (
+                    value.partition("T")[0],
+                    value.partition("T")[2].partition(".")[0],
+                )
+                value = datetime.datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
             except ValueError:
                 pass
 
@@ -80,7 +81,7 @@ class ResponseDataObject(object):
 
 
 class Response(object):
-    '''
+    """
     <?xml version='1.0' encoding='UTF-8'?>
     <findItemsByProductResponse xmlns="http://www.ebay.com/marketplace/search/v1/services">
         <ack>Success</ack>
@@ -131,9 +132,11 @@ class Response(object):
     True
     >>> len(item.shipping.c) == 2
     True
-    '''
+    """
 
-    def __init__(self, obj, verb=None, list_nodes=[], datetime_nodes=[], parse_response=True):
+    def __init__(
+        self, obj, verb=None, list_nodes=[], datetime_nodes=[], parse_response=True
+    ):
         self._list_nodes = copy.copy(list_nodes)
         self._obj = obj
 
@@ -142,26 +145,30 @@ class Response(object):
                 self._dom = self._parse_xml(obj.content)
                 self._dict = self._etree_to_dict(self._dom)
 
-                if verb and 'Envelope' in self._dict.keys():
-                    elem = self._dom.find('Body').find('%sResponse' % verb)
+                if verb and "Envelope" in self._dict.keys():
+                    elem = self._dom.find("Body").find("%sResponse" % verb)
                     if elem is not None:
                         self._dom = elem
 
-                    self._dict = self._dict['Envelope'][
-                        'Body'].get('%sResponse' % verb, self._dict)
+                    self._dict = self._dict["Envelope"]["Body"].get(
+                        "%sResponse" % verb, self._dict
+                    )
                 elif verb:
-                    elem = self._dom.find('%sResponse' % verb)
+                    elem = self._dom.find("%sResponse" % verb)
                     if elem is not None:
                         self._dom = elem
 
-                    self._dict = self._dict.get(
-                        '%sResponse' % verb, self._dict)
+                    self._dict = self._dict.get("%sResponse" % verb, self._dict)
 
-                self.reply = ResponseDataObject(self._dict,
-                                                datetime_nodes=copy.copy(datetime_nodes))
+                self.reply = ResponseDataObject(
+                    self._dict, datetime_nodes=copy.copy(datetime_nodes)
+                )
             except XMLSyntaxError as e:
-                log.debug('response parse failed: %s' % e)
-                self._dom = self._parse_xml("<%sResponse>parse error <![CDATA[%s]]></%sResponse>" % (verb, e, verb))
+                log.debug("response parse failed: %s" % e)
+                self._dom = self._parse_xml(
+                    "<%sResponse>parse error <![CDATA[%s]]></%sResponse>"
+                    % (verb, e, verb)
+                )
                 self._dict = self._etree_to_dict(self._dom)
                 self.reply = ResponseDataObject({}, [])
 
@@ -179,7 +186,7 @@ class Response(object):
             except AttributeError:
                 break
 
-        return '.'.join(path)
+        return ".".join(path)
 
     @staticmethod
     def _pullval(v):
@@ -215,12 +222,12 @@ class Response(object):
                         d[t.tag][k] = [d[t.tag][k]]
 
         if t.attrib:
-            d[t.tag].update(('_' + k, v) for k, v in t.attrib.items())
+            d[t.tag].update(("_" + k, v) for k, v in t.attrib.items())
         if t.text:
             text = t.text.strip()
             if children or t.attrib:
                 if text:
-                    d[t.tag]['value'] = text
+                    d[t.tag]["value"] = text
             else:
                 d[t.tag] = text
         return d
@@ -232,7 +239,7 @@ class Response(object):
         return get_dom_tree(xml)
 
     def _get_node_tag(self, node):
-        return node.tag.replace('{' + node.nsmap.get(node.prefix, '') + '}', '')
+        return node.tag.replace("{" + node.nsmap.get(node.prefix, "") + "}", "")
 
     def dom(self, lxml=True):
         if not lxml:
@@ -248,13 +255,14 @@ class Response(object):
         return json.dumps(self.dict())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     import os
     import sys
 
-    sys.path.insert(0, '%s/' % os.path.dirname(__file__))
+    sys.path.insert(0, "%s/" % os.path.dirname(__file__))
 
     import doctest
+
     failure_count, test_count = doctest.testmod()
     sys.exit(failure_count)

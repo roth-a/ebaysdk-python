@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Copyright 2012-2019 eBay Inc.
 Authored by: Tim Keefer
 Licensed under CDDL 1.0
-'''
+"""
 
 import os
 
-from ebaysdk import log
 from ebaysdk.exception import ConnectionConfigError
 from ebaysdk.utils import parse_yaml
 
@@ -27,7 +26,7 @@ class Config(object):
     22
     """
 
-    def __init__(self, domain, connection_kwargs=dict(), config_file='ebay.yaml'):
+    def __init__(self, domain, connection_kwargs=dict(), config_file="ebay.yaml"):
         self.config_file = config_file
         self.domain = domain
         self.values = dict()
@@ -51,7 +50,7 @@ class Config(object):
             return self
 
         # check other directories
-        dirs = ['.', os.path.expanduser('~'), '/etc']
+        dirs = [".", os.path.expanduser("~"), "/etc"]
         for mydir in dirs:
             myfile = "%s/%s" % (mydir, self.config_file)
 
@@ -67,7 +66,9 @@ class Config(object):
 
         if self.config_file:
             raise ConnectionConfigError(
-                'config file %s not found. Set config_file=None for use without YAML config.' % self.config_file)
+                "config file %s not found. Set config_file=None for use without YAML config."
+                % self.config_file
+            )
 
     def file(self):
         return self.config_file_used
@@ -82,7 +83,9 @@ class Config(object):
             # log.debug('set (force): %s=%s' % (cKey, defaultValue))
             self.values.update({cKey: defaultValue})
 
-        elif cKey in self.connection_kwargs and self.connection_kwargs[cKey] is not None:
+        elif (
+            cKey in self.connection_kwargs and self.connection_kwargs[cKey] is not None
+        ):
             # log.debug('set: %s=%s' % (cKey, self.connection_kwargs[cKey]))
             self.values.update({cKey: self.connection_kwargs[cKey]})
 

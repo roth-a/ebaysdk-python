@@ -1,28 +1,30 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Copyright 2012-2019 eBay Inc.
 Authored by: Tim Keefer
 Licensed under CDDL 1.0
-'''
+"""
 
 from __future__ import absolute_import
+
+import doctest
 import os
 import sys
 import unittest
-import doctest
-import ebaysdk.utils
+
 import ebaysdk.config
-import ebaysdk.response
 import ebaysdk.connection
-import ebaysdk.http
-import ebaysdk.shopping
-import ebaysdk.trading
-import ebaysdk.merchandising
-import ebaysdk.soa.finditem
 import ebaysdk.finding
-import ebaysdk.poller.orders
+import ebaysdk.http
 import ebaysdk.inventorymanagement
+import ebaysdk.merchandising
+import ebaysdk.poller.orders
+import ebaysdk.response
+import ebaysdk.shopping
+import ebaysdk.soa.finditem
+import ebaysdk.trading
+import ebaysdk.utils
 
 # does not pass with python3.3
 try:
@@ -34,7 +36,6 @@ except ImportError:
 
 
 class TestBase(unittest.TestCase):
-
     def doctest(self, module):
         doctest.testmod(module, raise_on_error=True, verbose=False)
 
@@ -54,13 +55,14 @@ class TestBase(unittest.TestCase):
         self.doctest(ebaysdk.connection)
 
     def test_run_doctest_shopping(self):
-        s = ebaysdk.shopping.Connection(config_file=os.environ.get('EBAY_YAML'))
-        resp = s.execute('GetCategoryInfo',
-            {'CategoryID': '-1',
-             'IncludeSelector': ['ChildCategories']})
-        self.assertEqual(s.response.reply.Ack, 'Success')
+        s = ebaysdk.shopping.Connection(config_file=os.environ.get("EBAY_YAML"))
+        resp = s.execute(
+            "GetCategoryInfo",
+            {"CategoryID": "-1", "IncludeSelector": ["ChildCategories"]},
+        )
+        self.assertEqual(s.response.reply.Ack, "Success")
         self.assertEqual(s.error(), None)
-        #self.doctest(ebaysdk.shopping)
+        # self.doctest(ebaysdk.shopping)
 
     def test_run_doctest_trading(self):
         self.doctest(ebaysdk.trading)
@@ -75,11 +77,11 @@ class TestBase(unittest.TestCase):
         self.doctest(ebaysdk.inventorymanagement)
 
     def test_grequests(self):
-        if not sys.version_info[0] >= 3 \
-            and sys.modules.has_key('grequests') is True:
+        if not sys.version_info[0] >= 3 and sys.modules.has_key("grequests") is True:
 
             # self.doctest(ebaysdk.parallel)
             pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Copyright 2012-2019 eBay Inc.
 Authored by: Tim Keefer
 Licensed under CDDL 1.0
-'''
+"""
 
 import os
 
@@ -56,37 +56,39 @@ class Connection(FindingConnection):
 
         super(Connection, self).__init__(**kwargs)
 
-        self.config.set('uri', '/MerchandisingService', force=True)
-        self.config.set('service', 'MerchandisingService', force=True)
+        self.config.set("uri", "/MerchandisingService", force=True)
+        self.config.set("service", "MerchandisingService", force=True)
         self.config.set(
-            'doc_url', 'http://developer.ebay.com/Devzone/merchandising/docs/CallRef/index.html')
+            "doc_url",
+            "http://developer.ebay.com/Devzone/merchandising/docs/CallRef/index.html",
+        )
 
-        self.datetime_nodes = ['endtimeto', 'endtimefrom', 'timestamp']
+        self.datetime_nodes = ["endtimeto", "endtimefrom", "timestamp"]
         self.base_list_nodes = [
-            'getdealsresponse.itemrecommendations.item',
-            'getmostwatcheditemsresponse.itemrecommendations.item',
-            'getrelatedcategoryitemsresponse.itemrecommendations.item',
-            'getsimilaritemsresponse.itemrecommendations.item',
-            'gettopsellingproductsresponse.productrecommendations.product',
-            'getrelatedcategoryitemsresponse.itemfilter.value',
-            'getsimilaritemsresponse.itemfilter.value',
+            "getdealsresponse.itemrecommendations.item",
+            "getmostwatcheditemsresponse.itemrecommendations.item",
+            "getrelatedcategoryitemsresponse.itemrecommendations.item",
+            "getsimilaritemsresponse.itemrecommendations.item",
+            "gettopsellingproductsresponse.productrecommendations.product",
+            "getrelatedcategoryitemsresponse.itemfilter.value",
+            "getsimilaritemsresponse.itemfilter.value",
         ]
 
-    def build_request_headers(self, verb):
+    def build_request_headers(self, verb, url, body):
         return {
-            "X-EBAY-API-VERSION": self.config.get('version', ''),
-            "EBAY-SOA-CONSUMER-ID": self.config.get('appid', ''),
-            "X-EBAY-SOA-GLOBAL-ID": self.config.get('siteid', ''),
+            "X-EBAY-API-VERSION": self.config.get("version", ""),
+            "EBAY-SOA-CONSUMER-ID": self.config.get("appid", ""),
+            "X-EBAY-SOA-GLOBAL-ID": self.config.get("siteid", ""),
             "X-EBAY-SOA-OPERATION-NAME": verb,
             "X-EBAY-SOA-REQUEST-DATA-FORMAT": "XML",
             "X-EBAY-API-REQUEST-ENCODING": "XML",
-            "X-EBAY-SOA-SERVICE-NAME": self.config.get('service', ''),
-            "Content-Type": "text/xml"
+            "X-EBAY-SOA-SERVICE-NAME": self.config.get("service", ""),
+            "Content-Type": "text/xml",
         }
 
     def build_request_data(self, verb, data, verb_attrs):
         xml = "<?xml version='1.0' encoding='utf-8'?>"
-        xml += "<" + verb + "Request xmlns=\"http://www.ebay.com/marketplace/services\">"
+        xml += "<" + verb + 'Request xmlns="http://www.ebay.com/marketplace/services">'
         xml += dict2xml(data, self.escape_xml)
         xml += "</" + verb + "Request>"
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#from distutils.core import setup
+# from distutils.core import setup
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from setuptools import setup, find_packages
-import re
-import os
 
-PKG = 'ebaysdk'
+from setuptools import find_packages, setup
+
+PKG = "ebaysdk"
 
 version = __import__(PKG).get_version()
 
@@ -35,19 +34,19 @@ setup(
     author_email="tkeefer@gmail.com",
     url="https://github.com/timotheus/ebaysdk-python",
     license="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0",
-    packages=find_packages(include=['ebaysdk', 'ebaysdk.*']),
+    packages=find_packages(include=["ebaysdk", "ebaysdk.*"]),
     provides=[PKG],
-    install_requires=['lxml', 'requests'],
-    test_suite='tests',
+    install_requires=["lxml", "requests"],
+    test_suite="tests",
     long_description=long_desc,
     classifiers=[
-        'Topic :: Internet :: WWW/HTTP',
-        'Intended Audience :: Developers',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-    ]
+        "Topic :: Internet :: WWW/HTTP",
+        "Intended Audience :: Developers",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+    ],
 )

@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-'''
+"""
 Copyright 2012-2019 eBay Inc.
 Authored by: Tim Keefer
 Licensed under CDDL 1.0
-'''
+"""
 import sys
-from lxml import etree as ET
 from xml.sax.saxutils import escape
+
+from lxml import etree as ET
 
 if sys.version_info[0] >= 3:
     unicode = str
@@ -29,25 +30,25 @@ def parse_yaml(yaml_file):
         for line in f.readlines():
 
             # ignore comments
-            if line.startswith('#'):
+            if line.startswith("#"):
                 continue
 
             # parse the header
             elif line[0].isalnum():
-                key = line.strip().replace(':', '')
+                key = line.strip().replace(":", "")
                 current_key = key
                 data[current_key] = {}
 
             # parse the key: value line
             elif line[0].isspace():
-                values = line.strip().split(':', 1)
+                values = line.strip().split(":", 1)
 
                 if len(values) == 2:
                     cval = values[1].strip()
 
-                    if cval == '0':
+                    if cval == "0":
                         cval = False
-                    elif cval == '1':
+                    elif cval == "1":
                         cval = True
 
                     data[current_key][values[0].strip()] = cval
@@ -64,12 +65,13 @@ def python_2_unicode_compatible(klass):
     returning text and apply this decorator to the class.
     """
     if sys.version_info[0] < 3:
-        if '__str__' not in klass.__dict__:
-            raise ValueError("@python_2_unicode_compatible cannot be applied "
-                             "to %s because it doesn't define __str__()." %
-                             klass.__name__)
+        if "__str__" not in klass.__dict__:
+            raise ValueError(
+                "@python_2_unicode_compatible cannot be applied "
+                "to %s because it doesn't define __str__()." % klass.__name__
+            )
         klass.__unicode__ = klass.__str__
-        klass.__str__ = lambda self: self.__unicode__().encode('utf-8')
+        klass.__str__ = lambda self: self.__unicode__().encode("utf-8")
     return klass
 
 
@@ -83,10 +85,10 @@ def attribute_check(root):
     value = None
 
     if isinstance(root, dict):
-        if '#text' in root:
-            value = root['#text']
-        if '@attrs' in root:
-            for ak, av in sorted(root.pop('@attrs').items()):
+        if "#text" in root:
+            value = root["#text"]
+        if "@attrs" in root:
+            for ak, av in sorted(root.pop("@attrs").items()):
                 attrs.append(str('{0}="{1}"').format(ak, smart_encode(av)))
 
     return attrs, value
@@ -98,18 +100,18 @@ def smart_encode_request_data(value):
             return value
 
         if isinstance(value, str):
-            return value.encode('utf-8')
+            return value.encode("utf-8")
         else:
             return value
 
-    except UnicodeDecodeError as e:
+    except UnicodeDecodeError:
         return value
 
 
 def smart_encode(value):
     try:
         if sys.version_info[0] < 3:
-            return unicode(value).encode('utf-8')  # pylint: disable-msg=E0602
+            return unicode(value).encode("utf-8")  # pylint: disable-msg=E0602
         else:
             return value
             # return str(value)
@@ -121,7 +123,7 @@ def smart_encode(value):
 def smart_decode(str):
     try:
         if sys.version_info[0] < 3:
-            return str.decode('utf-8')
+            return str.decode("utf-8")
         return str
     except UnicodeEncodeError:
         return str
@@ -132,7 +134,7 @@ def to_xml(root):
 
 
 def dict2xml(root, escape_xml=False):
-    '''
+    """
     Doctests:
     >>> dict1 = {'Items': {'ItemId': ['1234', '2222']}}
     >>> dict2xml(dict1)
@@ -223,9 +225,9 @@ def dict2xml(root, escape_xml=False):
     ... }
     >>> dict2xml(dict_special) # doctest: +SKIP
     '<itemFilter><name>Condition - \\xc5\\x82\\xc5\\x9b\\xc5\\xbc\\xc5\\xba\\xc4\\x87</name><value>Used - \\xc5\\x82\\xc5\\x9b\\xc5\\xbc\\xc5\\xba\\xc4\\x87</value></itemFilter><itemFilter><name>LocatedIn - \\xc5\\x82\\xc5\\x9b\\xc5\\xbc\\xc5\\xba\\xc4\\x87</name><value>GB - \\xc5\\x82\\xc5\\x9b\\xc5\\xbc\\xc5\\xba\\xc4\\x87</value></itemFilter><paginationInput><pageNumber>1 - \\xc5\\x82\\xc5\\x9b\\xc5\\xbc\\xc5\\xba\\xc4\\x87</pageNumber><pageSize>25 - \\xc5\\x82\\xc5\\x9b\\xc5\\xbc\\xc5\\xba\\xc4\\x87</pageSize></paginationInput><searchFilter><categoryId site="US - \\xc5\\x82\\xc5\\x9b\\xc5\\xbc\\xc5\\xba\\xc4\\x87">SomeID - \\xc5\\x82\\xc5\\x9b\\xc5\\xbc\\xc5\\xba\\xc4\\x87</categoryId></searchFilter><sortOrder>StartTimeNewest - \\xc5\\x82\\xc5\\x9b\\xc5\\xbc\\xc5\\xba\\xc4\\x87</sortOrder>'
-    '''
+    """
 
-    xml = str('')
+    xml = str("")
     if root is None:
         return xml
 
@@ -240,13 +242,19 @@ def dict2xml(root, escape_xml=False):
                 elif isinstance(value, dict):
                     value = dict2xml(value, escape_xml)
 
-                attrs_sp = str('')
+                attrs_sp = str("")
                 if len(attrs) > 0:
-                    attrs_sp = str(' ')
+                    attrs_sp = str(" ")
 
-                xml = str('{xml}<{tag}{attrs_sp}{attrs}>{value}</{tag}>') \
-                    .format(**{'tag': key, 'xml': str(xml), 'attrs': str(' ').join(attrs),
-                               'value': smart_encode(value), 'attrs_sp': attrs_sp})
+                xml = str("{xml}<{tag}{attrs_sp}{attrs}>{value}</{tag}>").format(
+                    **{
+                        "tag": key,
+                        "xml": str(xml),
+                        "attrs": str(" ").join(attrs),
+                        "value": smart_encode(value),
+                        "attrs_sp": attrs_sp,
+                    }
+                )
 
             elif isinstance(root[key], list):
 
@@ -258,28 +266,42 @@ def dict2xml(root, escape_xml=False):
                     elif isinstance(value, dict):
                         value = dict2xml(value, escape_xml)
 
-                    attrs_sp = ''
+                    attrs_sp = ""
                     if len(attrs) > 0:
-                        attrs_sp = ' '
+                        attrs_sp = " "
 
-                    xml = str('{xml}<{tag}{attrs_sp}{attrs}>{value}</{tag}>') \
-                        .format(**{'xml': str(xml), 'tag': key, 'attrs': ' '.join(attrs), 'value': smart_encode(value),
-                                   'attrs_sp': attrs_sp})
+                    xml = str("{xml}<{tag}{attrs_sp}{attrs}>{value}</{tag}>").format(
+                        **{
+                            "xml": str(xml),
+                            "tag": key,
+                            "attrs": " ".join(attrs),
+                            "value": smart_encode(value),
+                            "attrs_sp": attrs_sp,
+                        }
+                    )
 
             else:
                 value = root[key]
-                if escape_xml and hasattr(value, 'startswith') and not value.startswith('<![CDATA['):
+                if (
+                    escape_xml
+                    and hasattr(value, "startswith")
+                    and not value.startswith("<![CDATA[")
+                ):
                     value = escape(value)
-                xml = str('{xml}<{tag}>{value}</{tag}>') \
-                    .format(**{'xml': str(xml), 'tag': key, 'value': smart_encode(value)})
+                xml = str("{xml}<{tag}>{value}</{tag}>").format(
+                    **{"xml": str(xml), "tag": key, "value": smart_encode(value)}
+                )
 
-    elif isinstance(root, str) or isinstance(root, int) \
-            or isinstance(root, float) or isinstance(root, long) \
-            or isinstance(root, unicode):
-        xml = str('{0}{1}').format(str(xml), smart_encode(root))
+    elif (
+        isinstance(root, str)
+        or isinstance(root, int)
+        or isinstance(root, float)
+        or isinstance(root, long)
+        or isinstance(root, unicode)
+    ):
+        xml = str("{0}{1}").format(str(xml), smart_encode(root))
     else:
-        raise Exception('Unable to serialize node of type %s (%s)' %
-                        (type(root), root))
+        raise Exception("Unable to serialize node of type %s (%s)" % (type(root), root))
 
     return xml
 
@@ -289,7 +311,7 @@ def getValue(response_dict, *args, **kwargs):
     first = args_a[0]
     args_a.remove(first)
 
-    h = kwargs.get('mydict', {})
+    h = kwargs.get("mydict", {})
     if h:
         h = h.get(first, {})
     else:
@@ -297,8 +319,8 @@ def getValue(response_dict, *args, **kwargs):
 
     if len(args) == 1:
         try:
-            return h.get('value', None)
-        except Exception as e:
+            return h.get("value", None)
+        except Exception:
             return h
 
     last = args_a.pop()
@@ -309,8 +331,8 @@ def getValue(response_dict, *args, **kwargs):
     h = h.get(last, {})
 
     try:
-        return h.get('value', None)
-    except Exception as e:
+        return h.get("value", None)
+    except Exception:
         return h
 
 
@@ -319,42 +341,44 @@ def getNodeText(node):
 
     rc = []
 
-    if hasattr(node, 'childNodes'):
+    if hasattr(node, "childNodes"):
         for cn in node.childNodes:
             if cn.nodeType == cn.TEXT_NODE:
                 rc.append(cn.data)
             elif cn.nodeType == cn.CDATA_SECTION_NODE:
                 rc.append(cn.data)
 
-    return ''.join(rc)
+    return "".join(rc)
 
 
 def perftest_dict2xml():
     sample_dict = {
-        'searchFilter': {'categoryId': {'#text': 222, '@attrs': {'site': 'US'}}},
-        'paginationInput': {
-            'pageNumber': '1',
-            'pageSize': '25'
-        },
-        'itemFilter': [
-            {'name': 'Condition',
-             'value': 'Used'},
-            {'name': 'LocatedIn',
-             'value': 'GB'},
+        "searchFilter": {"categoryId": {"#text": 222, "@attrs": {"site": "US"}}},
+        "paginationInput": {"pageNumber": "1", "pageSize": "25"},
+        "itemFilter": [
+            {"name": "Condition", "value": "Used"},
+            {"name": "LocatedIn", "value": "GB"},
         ],
-        'sortOrder': 'StartTimeNewest'
+        "sortOrder": "StartTimeNewest",
     }
 
-    xml = dict2xml(sample_dict)
+    dict2xml(sample_dict)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     import timeit
-    print("perftest_dict2xml() %s" %
-          timeit.timeit("perftest_dict2xml()", number=50000,
-                        setup="from __main__ import perftest_dict2xml"))
+
+    print(
+        "perftest_dict2xml() %s"
+        % timeit.timeit(
+            "perftest_dict2xml()",
+            number=50000,
+            setup="from __main__ import perftest_dict2xml",
+        )
+    )
 
     import doctest
+
     failure_count, test_count = doctest.testmod()
     sys.exit(failure_count)

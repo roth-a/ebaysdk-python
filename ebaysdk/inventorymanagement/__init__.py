@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Authored by: Michal Hernas
 Licensed under CDDL 1.0
-'''
+"""
 
 import os
 
 from ebaysdk import log
+from ebaysdk.config import Config
 from ebaysdk.connection import BaseConnection
 from ebaysdk.exception import ConnectionError
-from ebaysdk.config import Config
 from ebaysdk.utils import dict2xml, smart_encode
 
 
@@ -141,41 +141,43 @@ class Connection(BaseConnection):
         request_encoding  -- API encoding (default: XML)
         """
 
-        super(Connection, self).__init__(method='POST', **kwargs)
+        super(Connection, self).__init__(method="POST", **kwargs)
 
-        self.config = Config(domain=kwargs.get('domain', 'api.ebay.com'),
-                             connection_kwargs=kwargs,
-                             config_file=kwargs.get('config_file', 'ebay.yaml'))
+        self.config = Config(
+            domain=kwargs.get("domain", "api.ebay.com"),
+            connection_kwargs=kwargs,
+            config_file=kwargs.get("config_file", "ebay.yaml"),
+        )
 
         # override yaml defaults with args sent to the constructor
-        self.config.set('domain', kwargs.get('domain', 'api.ebay.com'))
-        self.config.set('uri', '/selling/inventory/v1')
-        self.config.set('https', True)
-        self.config.set('warnings', True)
-        self.config.set('errors', True)
-        self.config.set('siteid', None)
-        self.config.set('response_encoding', 'XML')
-        self.config.set('request_encoding', 'XML')
-        self.config.set('proxy_host', None)
-        self.config.set('proxy_port', None)
-        self.config.set('token', None)
-        self.config.set('iaf_token', None)
-        self.config.set('appid', None)
-        self.config.set('version', '1.0.0')
-        self.config.set('service', 'InventoryManagement')
+        self.config.set("domain", kwargs.get("domain", "api.ebay.com"))
+        self.config.set("uri", "/selling/inventory/v1")
+        self.config.set("https", True)
+        self.config.set("warnings", True)
+        self.config.set("errors", True)
+        self.config.set("siteid", None)
+        self.config.set("response_encoding", "XML")
+        self.config.set("request_encoding", "XML")
+        self.config.set("proxy_host", None)
+        self.config.set("proxy_port", None)
+        self.config.set("token", None)
+        self.config.set("iaf_token", None)
+        self.config.set("appid", None)
+        self.config.set("version", "1.0.0")
+        self.config.set("service", "InventoryManagement")
         self.config.set(
-            'doc_url', 'http://developer.ebay.com/Devzone/store-pickup/InventoryManagement/index.html')
+            "doc_url",
+            "http://developer.ebay.com/Devzone/store-pickup/InventoryManagement/index.html",
+        )
 
-        self.datetime_nodes = ['starttimefrom', 'timestamp', 'starttime',
-                               'endtime']
-        self.base_list_nodes = [
-        ]
+        self.datetime_nodes = ["starttimefrom", "timestamp", "starttime", "endtime"]
+        self.base_list_nodes = []
 
     endpoints = {
-        'addinventorylocation': 'locations/delta/add',
-        'addinventory': 'inventory/delta/add',
-        'deleteinventory': 'inventory/delta/delete',
-        'deleteinventorylocation': 'locations/delta/delete',
+        "addinventorylocation": "locations/delta/add",
+        "addinventory": "inventory/delta/add",
+        "deleteinventory": "inventory/delta/delete",
+        "deleteinventorylocation": "locations/delta/delete",
     }
 
     def build_request_url(self, verb):
@@ -183,14 +185,14 @@ class Connection(BaseConnection):
         endpoint = self.endpoints[verb.lower()]
         return "{0}/{1}".format(url, endpoint)
 
-    def build_request_headers(self, verb):
+    def build_request_headers(self, verb, url, body):
         return {
-            "Authorization": "TOKEN {0}".format(self.config.get('token')),
-            "Content-Type": "application/xml"
+            "Authorization": "TOKEN {0}".format(self.config.get("token")),
+            "Content-Type": "application/xml",
         }
 
     def build_request_data(self, verb, data, verb_attrs):
-        xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        xml = '<?xml version="1.0" encoding="utf-8"?>'
         xml += "<{verb}Request>".format(verb=verb)
         xml += dict2xml(data, self.escape_xml)
         xml += "</{verb}Request>".format(verb=verb)
@@ -201,8 +203,9 @@ class Connection(BaseConnection):
         warning_string = ""
 
         if len(self._resp_body_warnings) > 0:
-            warning_string = "{verb}: {message}" \
-                .format(verb=self.verb, message=", ".join(self._resp_body_warnings))
+            warning_string = "{verb}: {message}".format(
+                verb=self.verb, message=", ".join(self._resp_body_warnings)
+            )
 
         return warning_string
 
@@ -231,13 +234,13 @@ class Connection(BaseConnection):
             return errors
 
         # In special case we get errors in this format...
-        if not dom.findall('Errors') and dom.find('Body') is not None:
-            dom = dom.find('Body').find('Response')
+        if not dom.findall("Errors") and dom.find("Body") is not None:
+            dom = dom.find("Body").find("Response")
 
         if dom is None:
             return errors
 
-        for e in dom.findall('Errors'):
+        for e in dom.findall("Errors"):
             eSeverity = None
             eClass = None
             eShortMsg = None
@@ -245,32 +248,32 @@ class Connection(BaseConnection):
             eCode = None
 
             try:
-                eSeverity = e.findall('SeverityCode')[0].text
+                eSeverity = e.findall("SeverityCode")[0].text
             except IndexError:
                 pass
 
             try:
-                eClass = e.findall('ErrorClassification')[0].text
+                eClass = e.findall("ErrorClassification")[0].text
             except IndexError:
                 pass
 
             try:
-                eCode = e.findall('ErrorCode')[0].text
+                eCode = e.findall("ErrorCode")[0].text
             except IndexError:
                 pass
 
             try:
-                eShortMsg = e.findall('ShortMessage')[0].text
+                eShortMsg = e.findall("ShortMessage")[0].text
             except IndexError:
                 pass
 
             try:
-                eLongMsg = e.findall('LongMessage')[0].text
+                eLongMsg = e.findall("LongMessage")[0].text
             except IndexError:
                 pass
 
             try:
-                eCode = e.findall('ErrorCode')[0].text
+                eCode = e.findall("ErrorCode")[0].text
                 try:
                     int_code = int(eCode)
                 except ValueError:
@@ -282,11 +285,15 @@ class Connection(BaseConnection):
             except IndexError:
                 pass
 
-            msg = "Class: {eClass}, Severity: {severity}, Code: {code}, {shortMsg} {longMsg}" \
-                .format(eClass=eClass, severity=eSeverity, code=eCode, shortMsg=smart_encode(eShortMsg),
-                        longMsg=smart_encode(eLongMsg))
+            msg = "Class: {eClass}, Severity: {severity}, Code: {code}, {shortMsg} {longMsg}".format(
+                eClass=eClass,
+                severity=eSeverity,
+                code=eCode,
+                shortMsg=smart_encode(eShortMsg),
+                longMsg=smart_encode(eLongMsg),
+            )
 
-            if eSeverity == 'Warning':
+            if eSeverity == "Warning":
                 warnings.append(msg)
             else:
                 errors.append(msg)
@@ -295,20 +302,26 @@ class Connection(BaseConnection):
         self._resp_body_errors = errors
         self._resp_codes = resp_codes
 
-        if self.config.get('warnings') and len(warnings) > 0:
-            log.warning("{verb}: {message}\n\n".format(
-                verb=self.verb, message="\n".join(warnings)))
+        if self.config.get("warnings") and len(warnings) > 0:
+            log.warning(
+                "{verb}: {message}\n\n".format(
+                    verb=self.verb, message="\n".join(warnings)
+                )
+            )
 
         # In special case of error 500 on ebay side, we get really weird
         # response so I need to fallback to this one
-        Ack = getattr(self.response.reply, 'Ack', None)
+        Ack = getattr(self.response.reply, "Ack", None)
         if Ack is None:
             Ack = self.response.reply.Envelope.Body.Response.Ack
 
-        if Ack == 'Failure':
-            if self.config.get('errors'):
-                log.error("{verb}: {message}\n\n".format(
-                    verb=self.verb, message="\n".join(errors)))
+        if Ack == "Failure":
+            if self.config.get("errors"):
+                log.error(
+                    "{verb}: {message}\n\n".format(
+                        verb=self.verb, message="\n".join(errors)
+                    )
+                )
 
             return errors
 

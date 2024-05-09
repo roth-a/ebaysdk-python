@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
-'''
+"""
 Copyright 2012-2019 eBay Inc.
 Authored by: Tim Keefer
 Licensed under CDDL 1.0
-'''
+"""
 
+import datetime
 import os
 import sys
-import datetime
 from optparse import OptionParser
 
-sys.path.insert(0, '%s/../' % os.path.dirname(__file__))
+sys.path.insert(0, "%s/../" % os.path.dirname(__file__))
 
 from common import dump
 
 import ebaysdk
-from ebaysdk.utils import getNodeText
 from ebaysdk.exception import ConnectionError
 from ebaysdk.trading import Connection as Trading
 
@@ -24,24 +23,49 @@ def init_options():
     usage = "usage: %prog [options]"
     parser = OptionParser(usage=usage)
 
-    parser.add_option("-d", "--debug",
-                      action="store_true", dest="debug", default=False,
-                      help="Enabled debugging [default: %default]")
-    parser.add_option("-y", "--yaml",
-                      dest="yaml", default='ebay.yaml',
-                      help="Specifies the name of the YAML defaults file. [default: %default]")
-    parser.add_option("-a", "--appid",
-                      dest="appid", default=None,
-                      help="Specifies the eBay application id to use.")
-    parser.add_option("-p", "--devid",
-                      dest="devid", default=None,
-                      help="Specifies the eBay developer id to use.")
-    parser.add_option("-c", "--certid",
-                      dest="certid", default=None,
-                      help="Specifies the eBay cert id to use.")
-    parser.add_option("-n", "--domain",
-                      dest="domain", default='api.ebay.com',
-                      help="Specifies the eBay domain to use (e.g. api.sandbox.ebay.com).")
+    parser.add_option(
+        "-d",
+        "--debug",
+        action="store_true",
+        dest="debug",
+        default=False,
+        help="Enabled debugging [default: %default]",
+    )
+    parser.add_option(
+        "-y",
+        "--yaml",
+        dest="yaml",
+        default="ebay.yaml",
+        help="Specifies the name of the YAML defaults file. [default: %default]",
+    )
+    parser.add_option(
+        "-a",
+        "--appid",
+        dest="appid",
+        default=None,
+        help="Specifies the eBay application id to use.",
+    )
+    parser.add_option(
+        "-p",
+        "--devid",
+        dest="devid",
+        default=None,
+        help="Specifies the eBay developer id to use.",
+    )
+    parser.add_option(
+        "-c",
+        "--certid",
+        dest="certid",
+        default=None,
+        help="Specifies the eBay cert id to use.",
+    )
+    parser.add_option(
+        "-n",
+        "--domain",
+        dest="domain",
+        default="api.ebay.com",
+        help="Specifies the eBay domain to use (e.g. api.sandbox.ebay.com).",
+    )
 
     (opts, args) = parser.parse_args()
     return opts, args
@@ -50,10 +74,16 @@ def init_options():
 def run(opts):
 
     try:
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid)
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+        )
 
-        api.execute('GetCharities', {'CharityID': 3897})
+        api.execute("GetCharities", {"CharityID": 3897})
         dump(api)
         print(api.response.reply.Charity.Name)
 
@@ -64,10 +94,17 @@ def run(opts):
 
 def feedback(opts):
     try:
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid, warnings=False)
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+            warnings=False,
+        )
 
-        api.execute('GetFeedback', {'UserID': 'tim0th3us'})
+        api.execute("GetFeedback", {"UserID": "tim0th3us"})
         dump(api)
 
         if int(api.response.reply.FeedbackScore) > 50:
@@ -83,10 +120,17 @@ def feedback(opts):
 def getTokenStatus(opts):
 
     try:
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid, warnings=False)
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+            warnings=False,
+        )
 
-        api.execute('GetTokenStatus')
+        api.execute("GetTokenStatus")
         dump(api)
 
     except ConnectionError as e:
@@ -95,12 +139,18 @@ def getTokenStatus(opts):
 
 
 def verifyAddItem(opts):
-    """http://www.utilities-online.info/xmltojson/#.UXli2it4avc
-    """
+    """http://www.utilities-online.info/xmltojson/#.UXli2it4avc"""
 
     try:
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid, warnings=False)
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+            warnings=False,
+        )
 
         myitem = {
             "Item": {
@@ -118,7 +168,9 @@ def verifyAddItem(opts):
                 "ListingType": "Chinese",
                 "PaymentMethods": "PayPal",
                 "PayPalEmailAddress": "tkeefdddder@gmail.com",
-                "PictureDetails": {"PictureURL": "http://i1.sandbox.ebayimg.com/03/i/00/30/07/20_1.JPG?set_id=8800005007"},
+                "PictureDetails": {
+                    "PictureURL": "http://i1.sandbox.ebayimg.com/03/i/00/30/07/20_1.JPG?set_id=8800005007"
+                },
                 "PostalCode": "95125",
                 "Quantity": "1",
                 "ReturnPolicy": {
@@ -126,7 +178,7 @@ def verifyAddItem(opts):
                     "RefundOption": "MoneyBack",
                     "ReturnsWithinOption": "Days_30",
                     "Description": "If you are not satisfied, return the book for refund.",
-                    "ShippingCostPaidByOption": "Buyer"
+                    "ShippingCostPaidByOption": "Buyer",
                 },
                 "SellerProfiles": {
                     "SellerPaymentProfile": {
@@ -137,27 +189,27 @@ def verifyAddItem(opts):
                     },
                     "SellerShippingProfile": {
                         "ShippingProfileName": "USPS First Class, Priority, Priority Express Flat Rate Envelope",
-                    }
+                    },
                 },
                 "ShippingDetails": {
                     "ShippingType": "Calculated",
                     "ShippingServiceOptions": {
                         "ShippingServicePriority": "1",
-                        "ShippingService": "USPSMedia"
+                        "ShippingService": "USPSMedia",
                     },
                     "CalculatedShippingRate": {
                         "OriginatingPostalCode": "95125",
                         "PackagingHandlingCosts": "0.0",
                         "ShippingPackage": "PackageThickEnvelope",
                         "WeightMajor": "1",
-                        "WeightMinor": "0"
-                    }
+                        "WeightMinor": "0",
+                    },
                 },
-                "Site": "US"
+                "Site": "US",
             }
         }
 
-        api.execute('VerifyAddItem', myitem)
+        api.execute("VerifyAddItem", myitem)
         dump(api)
 
     except ConnectionError as e:
@@ -166,12 +218,18 @@ def verifyAddItem(opts):
 
 
 def verifyAddItemErrorCodes(opts):
-    """http://www.utilities-online.info/xmltojson/#.UXli2it4avc
-    """
+    """http://www.utilities-online.info/xmltojson/#.UXli2it4avc"""
 
     try:
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid, warnings=False)
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+            warnings=False,
+        )
 
         myitem = {
             "Item": {
@@ -188,7 +246,9 @@ def verifyAddItemErrorCodes(opts):
                 "ListingType": "Chinese",
                 "PaymentMethods": "PayPal",
                 "PayPalEmailAddress": "tkeefdddder@gmail.com",
-                "PictureDetails": {"PictureURL": "http://i1.sandbox.ebayimg.com/03/i/00/30/07/20_1.JPG?set_id=8800005007"},
+                "PictureDetails": {
+                    "PictureURL": "http://i1.sandbox.ebayimg.com/03/i/00/30/07/20_1.JPG?set_id=8800005007"
+                },
                 "PostalCode": "95125",
                 "Quantity": "1",
                 "ReturnPolicy": {
@@ -196,44 +256,44 @@ def verifyAddItemErrorCodes(opts):
                     "RefundOption": "MoneyBack",
                     "ReturnsWithinOption": "Days_30",
                     "Description": "If you are not satisfied, return the book for refund.",
-                    "ShippingCostPaidByOption": "Buyer"
+                    "ShippingCostPaidByOption": "Buyer",
                 },
                 "ShippingDetails": {
                     "ShippingType": "Flat",
                     "ShippingServiceOptions": {
                         "ShippingServicePriority": "1",
                         "ShippingService": "USPSMedia",
-                        "ShippingServiceCost": "2.50"
-                    }
+                        "ShippingServiceCost": "2.50",
+                    },
                 },
-                "Site": "US"
+                "Site": "US",
             }
         }
 
         motors_item = {
-            'Item': {
-                'Category': '101',
-                'Title': 'My Title',
-                'ItemCompatibilityList': {
-                    'Compatibility': [
+            "Item": {
+                "Category": "101",
+                "Title": "My Title",
+                "ItemCompatibilityList": {
+                    "Compatibility": [
                         {
-                            'CompatibilityNotes': 'Fits for all trims and engines.',
-                            'NameValueList': [
-                                {'Name': 'Year', 'Value': '2001'},
-                                {'Name': 'Make', 'Value': 'Honda'},
-                                {'Name': 'Model', 'Value': 'Accord'}
-                            ]
-                         },
+                            "CompatibilityNotes": "Fits for all trims and engines.",
+                            "NameValueList": [
+                                {"Name": "Year", "Value": "2001"},
+                                {"Name": "Make", "Value": "Honda"},
+                                {"Name": "Model", "Value": "Accord"},
+                            ],
+                        },
                     ]
-                }
+                },
             }
         }
 
-        api.execute('VerifyAddItem', myitem)
+        api.execute("VerifyAddItem", myitem)
 
     except ConnectionError as e:
         # traverse the DOM to look for error codes
-        for node in api.response.dom().findall('ErrorCode'):
+        for node in api.response.dom().findall("ErrorCode"):
             print("error code: %s" % node.text)
 
         # check for invalid data - error code 37
@@ -247,16 +307,23 @@ def verifyAddItemErrorCodes(opts):
 def uploadPicture(opts):
 
     try:
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid, warnings=True)
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+            warnings=True,
+        )
 
         pictureData = {
             "WarningLevel": "High",
             "ExternalPictureURL": "http://developer.ebay.com/DevZone/XML/docs/images/hp_book_image.jpg",
-            "PictureName": "WorldLeaders"
+            "PictureName": "WorldLeaders",
         }
 
-        api.execute('UploadSiteHostedPictures', pictureData)
+        api.execute("UploadSiteHostedPictures", pictureData)
         dump(api)
 
     except ConnectionError as e:
@@ -267,19 +334,23 @@ def uploadPicture(opts):
 def uploadPictureFromFilesystem(opts, filepath):
 
     try:
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid, warnings=True)
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+            warnings=True,
+        )
 
         # pass in an open file
         # the Requests module will close the file
-        files = {'file': ('EbayImage', open(filepath, 'rb'))}
+        files = {"file": ("EbayImage", open(filepath, "rb"))}
 
-        pictureData = {
-            "WarningLevel": "High",
-            "PictureName": "WorldLeaders"
-        }
+        pictureData = {"WarningLevel": "High", "PictureName": "WorldLeaders"}
 
-        api.execute('UploadSiteHostedPictures', pictureData, files=files)
+        api.execute("UploadSiteHostedPictures", pictureData, files=files)
         dump(api)
 
     except ConnectionError as e:
@@ -290,8 +361,15 @@ def uploadPictureFromFilesystem(opts, filepath):
 def memberMessages(opts):
 
     try:
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid, warnings=True)
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+            warnings=True,
+        )
 
         now = datetime.datetime.now()
 
@@ -301,17 +379,14 @@ def memberMessages(opts):
             # "MessageStatus": "Unanswered",
             "StartCreationTime": now - datetime.timedelta(days=60),
             "EndCreationTime": now,
-            "Pagination": {
-                "EntriesPerPage": "5",
-                "PageNumber": "1"
-            }
+            "Pagination": {"EntriesPerPage": "5", "PageNumber": "1"},
         }
 
-        api.execute('GetMemberMessages', memberData)
+        api.execute("GetMemberMessages", memberData)
 
         dump(api)
 
-        if api.response.reply.has_key('MemberMessage'):
+        if api.response.reply.has_key("MemberMessage"):
             messages = api.response.reply.MemberMessage.MemberMessageExchange
 
             if type(messages) != list:
@@ -328,10 +403,19 @@ def memberMessages(opts):
 def getUser(opts):
     try:
 
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid, warnings=True, timeout=20, siteid='101')
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+            warnings=True,
+            timeout=20,
+            siteid="101",
+        )
 
-        api.execute('GetUser', {'UserID': 'sallyma789'})
+        api.execute("GetUser", {"UserID": "sallyma789"})
         dump(api, full=False)
 
     except ConnectionError as e:
@@ -342,10 +426,18 @@ def getUser(opts):
 def getOrders(opts):
 
     try:
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid, warnings=True, timeout=20)
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+            warnings=True,
+            timeout=20,
+        )
 
-        api.execute('GetOrders', {'NumberOfDays': 30})
+        api.execute("GetOrders", {"NumberOfDays": 30})
         dump(api, full=False)
 
     except ConnectionError as e:
@@ -356,30 +448,40 @@ def getOrders(opts):
 def categories(opts):
 
     try:
-        api = Trading(debug=opts.debug, config_file=opts.yaml, appid=opts.appid, domain=opts.domain,
-                      certid=opts.certid, devid=opts.devid, warnings=True, timeout=20, siteid='0')
+        api = Trading(
+            debug=opts.debug,
+            config_file=opts.yaml,
+            appid=opts.appid,
+            domain=opts.domain,
+            certid=opts.certid,
+            devid=opts.devid,
+            warnings=True,
+            timeout=20,
+            siteid="0",
+        )
 
         callData = {
-            'DetailLevel': 'ReturnAll',
-            'CategorySiteID': 101,
-            'LevelLimit': 4,
+            "DetailLevel": "ReturnAll",
+            "CategorySiteID": 101,
+            "LevelLimit": 4,
         }
 
-        api.execute('GetCategories', callData)
+        api.execute("GetCategories", callData)
         dump(api, full=False)
 
     except ConnectionError as e:
         print(e)
         print(e.response.dict())
 
-'''
+
+"""
 api = trading(domain='api.sandbox.ebay.com')
 api.execute('GetCategories', {
     'DetailLevel': 'ReturnAll',
     'CategorySiteID': 101,
     'LevelLimit': 4,
 })
-'''
+"""
 
 if __name__ == "__main__":
     (opts, args) = init_options()

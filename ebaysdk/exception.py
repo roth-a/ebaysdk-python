@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Copyright 2012-2019 eBay Inc.
 Authored by: Tim Keefer
 Licensed under CDDL 1.0
-'''
+"""
 
 
 class EbaySDKError(Exception):
-
     def __init__(self, msg, response=None):
-        super(EbaySDKError, self).__init__(u'%s' % msg)
-        self.message = u'%s' % msg
+        super(EbaySDKError, self).__init__("%s" % msg)
+        self.message = "%s" % msg
         self.response = response
 
     def __str__(self):

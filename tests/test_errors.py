@@ -1,34 +1,43 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Copyright 2012-2019 eBay Inc.
 Authored by: Tim Keefer
 Licensed under CDDL 1.0
-'''
+"""
 
 from __future__ import absolute_import
+
 import os
 import unittest
-import ebaysdk.shopping
+
 import lxml
+
+import ebaysdk.shopping
 
 os.environ.setdefault("EBAY_YAML", "ebay.yaml")
 
-class TestErrors(unittest.TestCase):
 
+class TestErrors(unittest.TestCase):
     def DISABLE_test_single_item(self):
-        connection = ebaysdk.shopping.Connection(version='799', config_file=os.environ.get('EBAY_YAML'))
+        connection = ebaysdk.shopping.Connection(
+            version="799", config_file=os.environ.get("EBAY_YAML")
+        )
 
         for i in range(20):
-            connection.execute('GetSingleItem', {
-                'ItemID': '262809803926',
-                'version': '981',
-                'IncludeSelector': ['Variations']
-            })
+            connection.execute(
+                "GetSingleItem",
+                {
+                    "ItemID": "262809803926",
+                    "version": "981",
+                    "IncludeSelector": ["Variations"],
+                },
+            )
             self.assertEqual(connection.response.status_code, 200)
             self.assertEqual(type(connection.response.dom()), lxml.etree._Element)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
 
 """

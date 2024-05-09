@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Copyright 2012-2019 eBay Inc.
 Authored by: Tim Keefer
 Licensed under CDDL 1.0
-'''
-
-from ebaysdk.exception import ConnectionError
+"""
 
 # pylint: disable=import-error
 import grequests
+
+from ebaysdk.exception import ConnectionError
+
 # pylint: enable=import-error
 
 
@@ -53,14 +54,16 @@ class Parallel(object):
 
         try:
             for r in self._requests:
-                req = grequests.request(r.request.method,
-                                        r.request.url,
-                                        data=r.request.body,
-                                        headers=r.request.headers,
-                                        verify=False,
-                                        proxies=r.proxies,
-                                        timeout=r.timeout,
-                                        allow_redirects=True)
+                req = grequests.request(
+                    r.request.method,
+                    r.request.url,
+                    data=r.request.body,
+                    headers=r.request.headers,
+                    verify=False,
+                    proxies=r.proxies,
+                    timeout=r.timeout,
+                    allow_redirects=True,
+                )
 
                 self._grequests.append(req)
 
@@ -68,7 +71,8 @@ class Parallel(object):
                 self._errors.append("%s" % exception)
 
             gresponses = grequests.map(
-                self._grequests, exception_handler=exception_handler)
+                self._grequests, exception_handler=exception_handler
+            )
 
             for idx, r in enumerate(self._requests):
                 r.response = gresponses[idx]
@@ -92,7 +96,7 @@ class Parallel(object):
         return None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     import doctest
     import sys

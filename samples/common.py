@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
-'''
+"""
 Copyright 2012-2019 eBay Inc.
 Authored by: Tim Keefer
 Licensed under CDDL 1.0
-'''
+"""
 
 from ebaysdk.finding import Connection as finding
 
+
 def get_one_item(opts):
-    api = finding(debug=opts.debug, appid=opts.appid,
-                  config_file=opts.yaml, warnings=True)
+    api = finding(
+        debug=opts.debug, appid=opts.appid, config_file=opts.yaml, warnings=True
+    )
 
     api_request = {
-        'keywords': u'GRAMMY Foundation®',
+        "keywords": "GRAMMY Foundation®",
     }
 
-    response = api.execute('findItemsAdvanced', api_request)
+    response = api.execute("findItemsAdvanced", api_request)
     return response.reply.searchResult.item[0].itemId
 
 
