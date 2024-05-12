@@ -6,31 +6,12 @@ Authored by: Tim Keefer
 Licensed under CDDL 1.0
 """
 
-import base64
-import hashlib
-import json
-import os
-import time
-import uuid
-from base64 import b64encode
-from dataclasses import dataclass
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict
-from urllib.parse import urlparse
-
-import requests
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import ed25519, padding, rsa
-from requests.exceptions import HTTPError
 
 from ebaysdk import log
 from ebaysdk.config import Config
 from ebaysdk.connection import BaseConnection
-from ebaysdk.exception import PaginationLimit, RequestPaginationError
 from ebaysdk.signature import SignatureService
-from ebaysdk.utils import dict2xml, getNodeText, smart_encode
+from ebaysdk.utils import dict2xml, smart_encode
 
 
 class Connection(BaseConnection):
